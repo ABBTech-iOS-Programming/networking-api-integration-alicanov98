@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		F49A00ED303C3A4300DA2F68 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = F49A00EC303C3A4300DA2F68 /* SDWebImageSwiftUI */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		F43F1B6E3036E88400862E14 /* ProductShop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProductShop.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F49A00ED303C3A4300DA2F68 /* SDWebImageSwiftUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +70,7 @@
 			);
 			name = ProductShop;
 			packageProductDependencies = (
+				F49A00EC303C3A4300DA2F68 /* SDWebImageSwiftUI */,
 			);
 			productName = ProductShop;
 			productReference = F43F1B6E3036E88400862E14 /* ProductShop.app */;
@@ -94,6 +100,9 @@
 			);
 			mainGroup = F43F1B653036E88400862E14;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				F49A00EB303C3A4300DA2F68 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F43F1B6F3036E88400862E14 /* Products */;
 			projectDirPath = "";
@@ -332,6 +341,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		F49A00EB303C3A4300DA2F68 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		F49A00EC303C3A4300DA2F68 /* SDWebImageSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F49A00EB303C3A4300DA2F68 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
+			productName = SDWebImageSwiftUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = F43F1B663036E88400862E14 /* Project object */;
 }
