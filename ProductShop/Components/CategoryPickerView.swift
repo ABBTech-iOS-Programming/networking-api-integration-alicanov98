@@ -8,11 +8,33 @@
 import SwiftUI
 
 struct CategoryPickerView: View {
+    var viewModel: ProductsViewModel
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ScrollView(.horizontal,showsIndicators: false){
+        HStack{
+                ForEach(viewModel.categories,id:\.self){ category in
+                    Button{
+                        Task {
+                            await viewModel.fetchProducts(category: category == "All" ? nil : category)
+                        }
+                    } label: {
+                        Text(category)
+                            .padding(8)
+                            .background(viewModel.selectedCategory == category ? .primaryOrange : .primaryOrange.opacity(0.2))
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                            .foregroundStyle(viewModel.selectedCategory == category ? .white : .black)
+                    }
+                }
+            }
+        }
+        .task {
+          await  viewModel.fetchCategories()
+        }
     }
 }
 
 #Preview {
-    CategoryPickerView()
+    CategoryPickerView(viewModel: ProductsViewModel(
+        apiService: APIService()
+    ))
 }

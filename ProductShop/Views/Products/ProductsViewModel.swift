@@ -19,11 +19,35 @@ final class ProductsViewModel {
      var errorMessage: String?
      private(set) var selectedCategory: String? = "All"
      private let apiService: any APIServiceProtocol
-
+     var searchText = ""
+    
     init(apiService: any APIServiceProtocol) {
         self.apiService = apiService
     }
 
+    var filteredProducts: [Product] {
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard !query.isEmpty else {
+            return products
+        }
+
+        return products.filter { product in
+            product.title.localizedCaseInsensitiveContains(query) ||
+            product.category.localizedCaseInsensitiveContains(query) ||
+            product.brand?.localizedCaseInsensitiveContains(query) == true
+        }
+    }
+    
+    
+    func refresh() async {
+        await fetchProducts(
+            category: selectedCategory == "All"
+            ? nil
+            : selectedCategory
+        )
+    }
+    
     func fetchCategories() async {
         isLoading = true
         errorMessage = nil
@@ -64,7 +88,6 @@ final class ProductsViewModel {
             )
 
             products = response.products
-            print(response.products,"response.products--\(category)")
         } catch {
             handle(error)
         }

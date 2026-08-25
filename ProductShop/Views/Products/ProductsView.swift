@@ -11,64 +11,55 @@ import SwiftUI
 struct ProductsView: View {
     
     @State private var viewModel = ProductsViewModel(apiService: APIService())
-    @State private var searchText = ""
+
     var column = [
         GridItem(.flexible(),spacing: 12),
         GridItem(.flexible(),spacing: 12)
     ]
     
-    private var filteredProducts: [Product] {
-        guard !searchText.trimmingCharacters(in: .whitespaces).isEmpty else {
-            return viewModel.products
-        }
 
-        return viewModel.products.filter { product in
-            product.title.localizedCaseInsensitiveContains(searchText) ||
-            product.category.localizedCaseInsensitiveContains(searchText)
-        }
-    }
     
     var body: some View {
         ScrollView (showsIndicators: false){
             VStack (spacing:16){
-            bannerCard
-                searchField
-                category
-                productsList
-                
+                PromoBannerView()
+                ProductSearchField(viewModel: viewModel)
+                CategoryPickerView(viewModel: viewModel)
+                contentView
             }
          
         }
         .padding(.horizontal,16)
         .background(.primaryOrange.opacity(0.1))
-        
+        .refreshable {
+            await viewModel.refresh()
+        }
     }
     
-    var category: some View {
-        ScrollView(.horizontal,showsIndicators: false){
-        HStack{
-                ForEach(viewModel.categories,id:\.self){ category in
-                    Button{
-                        Task {
-                            await viewModel.fetchProducts(category: category == "All" ? nil : category)
-                        }
-                    } label: {
-                        Text(category)
-                            .padding(8)
-                            .background(viewModel.selectedCategory == category ? .primaryOrange : .primaryOrange.opacity(0.2))
-                            .clipShape(RoundedRectangle(cornerRadius: 16))
-                            .foregroundStyle(viewModel.selectedCategory == category ? .white : .black)
+
+    @ViewBuilder
+    var contentView: some View {
+        if viewModel.isLoading {
+            ProductGridSkeletonView()
+        } else  if let errorMessage = viewModel.errorMessage {
+            ErrorStateView(
+                message: errorMessage,
+                retryAction: {
+                    Task {
+                        await viewModel.refresh()
                     }
                 }
-            }
-        }
-        .task {
-          await  viewModel.fetchCategories()
+            )
+        } else if viewModel.filteredProducts.isEmpty {
+            emptyView
+        } else {
+            productsList
         }
     }
+    
     var productsList: some View {
         LazyVGrid(columns: column){
-            ForEach(filteredProducts){ product in
+            ForEach(viewModel.filteredProducts){ product in
                 NavigationLink {
                 ProductsDetailView(product: product)
                 } label: {
@@ -78,62 +69,23 @@ struct ProductsView: View {
         }
     }
     
-    var bannerCard: some View {
-        HStack{
-            VStack(alignment: .leading,spacing:8){
-                Text("Good morning")
-                    .font(.system(size: 12,weight: .medium))
-                    .foregroundStyle(.secondaryText)
-                Text("Find your next favorite product")
-                    .font(.system(size: 22,weight: .bold))
-                    .foregroundStyle(.white)
-             
-                Text("Fresh picks for you")
-                    .font(.system(size: 12,weight: .semibold))
-                    .foregroundStyle(.secondaryOrange)
-            }
-            .padding(16)
-            Spacer()
-            VStack {
-                Text("20% OFF")
-                    .font(.system(size: 12,weight: .semibold))
-                    .foregroundStyle(.white)
-                    .padding(8)
-                    .background(.primaryOrange)
-                    .clipped()
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    
-                Spacer()
-            }.padding(16)
-        }
-        .background(.primaryText)
-        .clipped()
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        
-    }
-    private var searchField: some View {
-        HStack(spacing: 12) {
-            Image(systemName: "magnifyingglass")
+    private var emptyView: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "shippingbox")
+                .font(.system(size: 40))
                 .foregroundStyle(.secondary)
 
-            TextField("Search products", text: $searchText)
-                .textInputAutocapitalization(.never)
-                .autocorrectionDisabled()
+            Text("No products found")
+                .font(.headline)
 
-            if !searchText.isEmpty {
-                Button {
-                    searchText = ""
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundStyle(.secondaryOrange)
-                }
-            }
+            Text("Try another search or category.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
         }
-        .padding(.horizontal, 16)
-        .frame(height: 50)
-        .background(.white)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 60)
     }
+    
 }
 
 #Preview {

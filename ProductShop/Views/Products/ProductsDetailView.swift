@@ -9,45 +9,52 @@ import SwiftUI
 import SDWebImageSwiftUI
 
 struct ProductsDetailView: View {
-    var product:Product
-    @State private var isFavorite = false
-    @State private var quantity = 1
+    @State private var viewModel: ProductsDetailViewModel
     @State private var selectedImageIndex = 0
-    private var discountedPrice: Double {
-        product.price * (1 - product.discountPercentage / 100)
+    
+    init(product: Product) {
+        _viewModel = State(initialValue: ProductsDetailViewModel(product: product))
     }
     
-    private var totalPrice: Double {
-        discountedPrice * Double(quantity)
-    }
+    
     
     var body: some View {
-        VStack(alignment: .leading){
-            productImagesView
-            productTitle
-            description
-            quantityView
-            bottomView
-        }
-        .padding(.horizontal,16)
-        .navigationTitle("Product Detail")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement:.topBarTrailing) {
-                Button{
-                    isFavorite.toggle()
-                }label: {
-                    Image(systemName: isFavorite ? "heart.fill" : "heart")
-                        .foregroundStyle(.primaryOrange)
+        ScrollView (showsIndicators: false) {
+            VStack(alignment: .leading,spacing: 24){
+                productImagesView
+                productTitle
+                description
+                quantityView
+                bottomView
+            }
+            .padding(.horizontal,16)
+            .navigationTitle("Product Detail")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement:.topBarTrailing) {
+                    favoriteButton
                 }
             }
         }
     }
     
+    private var favoriteButton: some View {
+            Button {
+                viewModel.toggleFavorite()
+            } label: {
+                Image(
+                    systemName: viewModel.isFavorite
+                        ? "heart.fill"
+                        : "heart"
+                )
+                .foregroundStyle(.primaryOrange)
+            }
+        }
+    
     private var productImagesView: some View {
         VStack(spacing:12) {
             TabView(selection: $selectedImageIndex) {
-                ForEach(Array(product.images.enumerated()), id:\.offset) { index ,imageURL in
+                ForEach(Array(viewModel.product.images.enumerated()), id:\.offset) { index ,imageURL in
                     WebImage(url: URL(string: imageURL))
                                         .resizable()
                                         .scaledToFit()
@@ -62,7 +69,7 @@ struct ProductsDetailView: View {
             .tabViewStyle(.page(indexDisplayMode: .never))
             
             HStack(spacing: 6) {
-                ForEach(product.images.indices, id: \.self)
+                ForEach(viewModel.product.images.indices, id: \.self)
                 { index in
                 Capsule()
                         .frame(width: selectedImageIndex == index ? 24 : 6, height: 6)
@@ -74,30 +81,30 @@ struct ProductsDetailView: View {
     
     private var productTitle: some View {
         VStack(alignment: .leading){
-            Text("Essence Mascara Lash Princess")
+            Text(viewModel.product.title)
                 .font(.system(size: 16,weight: .bold))
-            Text("\(product.category) • \(product.brand ?? "Unknown")")
+            Text("\(viewModel.product.category) • \(viewModel.product.brand ?? "Unknown")")
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundStyle(.secondary)
             HStack {
                 HStack (spacing:14){
                     HStack(spacing:4){
                     Image(systemName: "star.fill")
-                        .foregroundStyle(.yellow)
+                        .foregroundStyle(.primaryOrange)
                         .font(.system(size: 13))
-                    Text(product.rating.formatted(.number.precision(.fractionLength(0...2))))
+                        Text(viewModel.product.rating.formatted(.number.precision(.fractionLength(0...2))))
                         .font(.system(size: 13, weight: .semibold))
-                        .foregroundStyle(.yellow)
+                        .foregroundStyle(.primaryOrange)
                         .lineLimit(1)
                    }
-                    Text("(\(product.reviews.count) reviews)")
+                    Text("(\(viewModel.product.reviews.count) reviews)")
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
                     
                 }
                 Spacer()
-                Text("In stock: 5")
+                Text(viewModel.stockText)
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(.primaryGreen)
                     .padding(8)
@@ -110,11 +117,11 @@ struct ProductsDetailView: View {
     }
     
     private var description: some View {
-        VStack{
+        VStack(alignment: .leading){
             Text("Description")
                 .font(.system(size: 22,weight: .bold))
                 .foregroundStyle(.black)
-            Text(product.description)
+            Text(viewModel.product.description)
                 .font(.system(size: 14,weight: .semibold))
                 .foregroundStyle(.secondary)
                 .lineLimit(2)
@@ -125,37 +132,45 @@ struct ProductsDetailView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Quantity")
             .font(.system(size: 18, weight: .bold))
+                
             HStack(spacing: 20) {
-                Button{
-                    if quantity > 1 {
-                        quantity -= 1
-                    }
-                }label: {
-                    Image(systemName: "minus")
-                                        .font(.system(size: 16, weight: .bold))
-                                        .frame(width: 52, height: 52)
-                                        .background(.secondaryBackground)
-                                        .clipShape(RoundedRectangle(cornerRadius: 14))
-                }
-                .disabled(quantity == 1)
-                .opacity(quantity == 1 ? 0.5 : 1)
-                Text("\(quantity)")
-                                .font(.system(size: 18, weight: .semibold))
-
-                            Button {
-                                quantity += 1
-                            } label: {
-                                Image(systemName: "plus")
-                                    .font(.system(size: 16, weight: .bold))
-                                    .frame(width: 52, height: 52)
-                                    .background(.secondaryBackground)
-                                    .clipShape(RoundedRectangle(cornerRadius: 14))
-                            }
+                quantityButton(
+                icon: "minus",
+                isEnabled: viewModel.canDecreaseQuantity,
+                action: viewModel.decreaseQuantity
+                        )
+                
+                Text("\(viewModel.quantity)")
+                     .font(.system(size: 18, weight: .semibold))
+                     .frame(minWidth: 30)
+                
+                quantityButton(
+                 icon: "plus",
+                 isEnabled: viewModel.canIncreaseQuantity,
+                 action: viewModel.increaseQuantity
+                            )
             }
             .foregroundStyle(.primaryText)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
+    
+    private func quantityButton(
+            icon: String,
+            isEnabled: Bool,
+            action: @escaping () -> Void
+        ) -> some View {
+            Button(action: action) {
+                Image(systemName: icon)
+                    .font(.system(size: 16, weight: .bold))
+                    .frame(width: 52, height: 52)
+                    .background(.secondaryBackground)
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+            }
+            .foregroundStyle(.primaryText)
+            .disabled(!isEnabled)
+            .opacity(isEnabled ? 1 : 0.5)
+        }
     
     private var bottomView: some View {
         HStack(alignment: .bottom, spacing: 20) {
@@ -165,7 +180,7 @@ struct ProductsDetailView: View {
                     .font(.system(size: 13))
                     .foregroundStyle(.secondary)
 
-                Text(String(format: "$%.2f", totalPrice))
+                Text(viewModel.formattedTotalPrice)
                     .font(.system(size: 28, weight: .bold))
                     .foregroundStyle(.primaryOrange)
             }
@@ -173,17 +188,17 @@ struct ProductsDetailView: View {
             Spacer()
 
             Button {
-                // Add to cart logic sonra
+                viewModel.addToCart()
             } label: {
                 Text("Add to Cart")
                     .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
+                    .frame(maxWidth: 220)
                     .frame(height: 60)
                     .background(.primaryOrange)
                     .clipShape(RoundedRectangle(cornerRadius: 18))
             }
-            .frame(maxWidth: 260)
+            .frame(maxWidth: 200)
         }
     }
 }

@@ -25,27 +25,27 @@ struct ProductCardView: View {
                 
                 HStack (spacing:4){
                     Image(systemName: "star.fill")
-                        .foregroundStyle(.yellow)
                         .font(.system(size: 13))
                     Text(product.rating.formatted(.number.precision(.fractionLength(0...2))))
                         .font(.system(size: 13, weight: .semibold))
-                        .foregroundStyle(.yellow)
                         .lineLimit(1)
                 }
-                
+                .foregroundStyle(.primaryOrange)
             }
             VStack (alignment:.leading){
                 Text(product.title)
                     .font(.system(size: 16,weight: .bold))
+                    .foregroundStyle(.black)
                     .lineLimit(1)
                 Text(product.brand ?? "Brand")
                     .font(.system(size: 13,weight: .medium))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color(UIColor.secondaryLabel))
                     .lineLimit(1)
             }
             HStack {
                 Text(String(format: "$%.2f", product.price))
                     .font(.system(size: 16, weight: .bold))
+                    .foregroundStyle(.black)
                 Spacer()
                 Button {
                     
@@ -62,7 +62,7 @@ struct ProductCardView: View {
            
         }
         .padding(16)
-        .background(.white)
+        .background(Color(UIColor.systemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 }

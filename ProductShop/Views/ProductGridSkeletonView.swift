@@ -8,8 +8,18 @@
 import SwiftUI
 
 struct ProductGridSkeletonView: View {
+
+    private let columns = [
+        GridItem(.flexible(), spacing: 12),
+        GridItem(.flexible(), spacing: 12)
+    ]
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        LazyVGrid(columns: columns, spacing: 12) {
+            ForEach(0..<6, id: \.self) { _ in
+                ProductCardSkeletonView()
+            }
+        }
     }
 }
 
