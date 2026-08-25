@@ -15,7 +15,6 @@ final class ProductsDetailViewModel {
     let product: Product
     
     private(set)  var quantity = 1
-    private(set)  var isFavorite = false
     
     init(product: Product, ) {
         self.product = product
@@ -45,9 +44,6 @@ final class ProductsDetailViewModel {
             quantity < product.stock
         }
 
-        func toggleFavorite() {
-            isFavorite.toggle()
-        }
 
         func increaseQuantity() {
             guard canIncreaseQuantity else {

@@ -11,6 +11,8 @@ import SDWebImageSwiftUI
 struct ProductsDetailView: View {
     @State private var viewModel: ProductsDetailViewModel
     @State private var selectedImageIndex = 0
+    @Environment(FavoritesStore.self)
+    private var favoritesStore
     
     init(product: Product) {
         _viewModel = State(initialValue: ProductsDetailViewModel(product: product))
@@ -40,10 +42,10 @@ struct ProductsDetailView: View {
     
     private var favoriteButton: some View {
             Button {
-                viewModel.toggleFavorite()
+                favoritesStore.toggle(viewModel.product)
             } label: {
                 Image(
-                    systemName: viewModel.isFavorite
+                    systemName: favoritesStore.contains(viewModel.product)
                         ? "heart.fill"
                         : "heart"
                 )
@@ -224,4 +226,5 @@ struct ProductsDetailView: View {
         images: ["https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/thumbnail.webp","https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/thumbnail.webp","https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/thumbnail.webp"],
         thumbnail: "https://cdn.dummyjson.com/product-images/beauty/essence-mascara-lash-princess/thumbnail.webp"
     ))
+    .environment(FavoritesStore())
 }

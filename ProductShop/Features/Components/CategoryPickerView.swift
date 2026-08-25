@@ -19,7 +19,8 @@ struct CategoryPickerView: View {
                         }
                     } label: {
                         Text(category)
-                            .padding(8)
+                            .padding(.horizontal,16)
+                            .padding(.vertical,8)
                             .background(viewModel.selectedCategory == category ? .primaryOrange : .primaryOrange.opacity(0.2))
                             .clipShape(RoundedRectangle(cornerRadius: 16))
                             .foregroundStyle(viewModel.selectedCategory == category ? .white : .black)
