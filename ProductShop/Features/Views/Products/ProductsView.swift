@@ -11,7 +11,10 @@ import SwiftUI
 struct ProductsView: View {
     
     @State private var viewModel = ProductsViewModel(apiService: APIService())
-
+    
+    @Environment(CartStore.self)
+    private var cartStore
+    
     var column = [
         GridItem(.flexible(),spacing: 12),
         GridItem(.flexible(),spacing: 12)
@@ -63,7 +66,12 @@ struct ProductsView: View {
                 NavigationLink {
                 ProductsDetailView(product: product)
                 } label: {
-                    ProductCardView(product:product)
+                    ProductCardView(
+                        product:product,
+                        addToCart: {
+                                cartStore.add(product: product)
+                            }
+                    )
                 }
             }
         }

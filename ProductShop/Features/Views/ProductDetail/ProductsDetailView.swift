@@ -11,8 +11,8 @@ import SDWebImageSwiftUI
 struct ProductsDetailView: View {
     @State private var viewModel: ProductsDetailViewModel
     @State private var selectedImageIndex = 0
-    @Environment(FavoritesStore.self)
-    private var favoritesStore
+    @Environment(FavoritesStore.self) private var favoritesStore
+    @Environment(CartStore.self)  private var cartStore
     
     init(product: Product) {
         _viewModel = State(initialValue: ProductsDetailViewModel(product: product))
@@ -190,7 +190,10 @@ struct ProductsDetailView: View {
             Spacer()
 
             Button {
-                viewModel.addToCart()
+                cartStore.add(
+                    product: viewModel.product,
+                    quantity: viewModel.quantity
+                )
             } label: {
                 Text("Add to Cart")
                     .font(.system(size: 17, weight: .semibold))
@@ -202,6 +205,7 @@ struct ProductsDetailView: View {
             }
             .frame(maxWidth: 200)
         }
+        .toolbar(.hidden, for: .tabBar)
     }
 }
 

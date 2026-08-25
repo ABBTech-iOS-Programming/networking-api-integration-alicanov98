@@ -10,6 +10,7 @@ import SDWebImageSwiftUI
 
 struct ProductCardView: View {
      var product:Product
+     let addToCart: () -> Void
     
     var body: some View {
         VStack (alignment: .leading){
@@ -48,7 +49,7 @@ struct ProductCardView: View {
                     .foregroundStyle(.black)
                 Spacer()
                 Button {
-                    
+                    addToCart()
                 } label: {
                     Image(systemName: "plus")
                         .padding(16)

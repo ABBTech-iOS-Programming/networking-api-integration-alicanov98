@@ -60,13 +60,5 @@ final class ProductsDetailViewModel {
 
             quantity -= 1
         }
-
-        func addToCart() {
-            print(
-                "Product: \(product.title), " +
-                "quantity: \(quantity), " +
-                "total: \(formattedTotalPrice)"
-            )
-        }
     
 }
