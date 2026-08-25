@@ -9,7 +9,7 @@ import Foundation
 
 // MARK: - ProductsResponse
 
-struct ProductsResponse: Decodable  {
+struct ProductsResponse: Codable  {
     let products: [Product]
     let total: Int
     let skip: Int
@@ -18,7 +18,7 @@ struct ProductsResponse: Decodable  {
 
 // MARK: - Product
 
-struct Product: Decodable, Identifiable {
+struct Product: Codable, Identifiable {
     let id: Int
     let title: String
     let description: String
@@ -43,7 +43,7 @@ struct Product: Decodable, Identifiable {
 
 // MARK: - Review
 
-struct Review: Decodable, Identifiable {
+struct Review: Codable, Identifiable {
     let rating: Int
     let comment: String
     let date: String

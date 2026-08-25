@@ -13,7 +13,7 @@ extension Product {
     }
 }
 
-struct CartItem: Identifiable {
+struct CartItem: Codable ,Identifiable {
     let product: Product
     var quantity: Int
     
