@@ -20,9 +20,9 @@ struct CartView: View {
                 VStack(spacing: 16) {
 
                     ForEach(cartStore.items) { item in
-//                        NavigationLink {
-//                            ProductsDetailView(product: item.product)
-//                        } label: {
+                        NavigationLink {
+                            ProductsDetailView(product: item.product)
+                        } label: {
                             CartItemView(
                                 item: item,
                                 increaseAction: {
@@ -41,7 +41,7 @@ struct CartView: View {
                                     )
                                 }
                             )
-//                        }
+                        }
                     }
 
                     totalView

@@ -31,9 +31,9 @@ struct CartItemView: View {
 private extension CartItemView {
 
     var productImage: some View {
-        NavigationLink {
-            ProductsDetailView(product: item.product)
-        } label: {
+//        NavigationLink {
+//            ProductsDetailView(product: item.product)
+//        } label: {
             WebImage(url: URL(string: item.product.thumbnail))
                 .resizable()
                 .scaledToFit()
@@ -41,7 +41,7 @@ private extension CartItemView {
                 .background(.secondaryBackground)
                 .clipShape(RoundedRectangle(cornerRadius: 16))
         }
-    }
+//    }
 }
 
 
@@ -99,7 +99,6 @@ private extension CartItemView {
         }
         .buttonStyle(.plain)
         .disabled(isDisabled)
-        .opacity(isDisabled ? 0.5 : 1)
     }
 }
 
