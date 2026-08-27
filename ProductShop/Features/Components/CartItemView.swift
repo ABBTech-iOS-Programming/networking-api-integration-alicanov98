@@ -34,12 +34,20 @@ private extension CartItemView {
 //        NavigationLink {
 //            ProductsDetailView(product: item.product)
 //        } label: {
-            WebImage(url: URL(string: item.product.thumbnail))
+        WebImage(url: URL(string: item.product.thumbnail)) { image in
+            image
+                .resizable()
+        } placeholder: {
+            Image(systemName: "photo")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 90, height: 90)
-                .background(.secondaryBackground)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .foregroundStyle(.gray.opacity(0.5))
+                .padding(24)
+        }
+        .scaledToFit()
+        .frame(width: 90, height: 90)
+        .background(.secondaryBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
         }
 //    }
 }

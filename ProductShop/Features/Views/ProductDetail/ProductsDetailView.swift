@@ -57,11 +57,19 @@ struct ProductsDetailView: View {
         VStack(spacing:12) {
             TabView(selection: $selectedImageIndex) {
                 ForEach(Array(viewModel.product.images.enumerated()), id:\.offset) { index ,imageURL in
-                    WebImage(url: URL(string: imageURL))
-                                        .resizable()
-                                        .scaledToFit()
-                                        .padding(24)
-                                        .tag(index)
+                    WebImage(url: URL(string: imageURL)){ image in
+                        image.resizable()
+                    } placeholder: {
+                        Image("photo")
+                            .resizable()
+                            .scaledToFit()
+                            .foregroundStyle(.gray.opacity(0.5))
+                            .padding(24)
+                    }
+                     .resizable()
+                     .scaledToFit()
+                     .padding(24)
+                     .tag(index)
                     
                 }
             }

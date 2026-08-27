@@ -15,13 +15,22 @@ struct ProductCardView: View {
     var body: some View {
         VStack (alignment: .leading){
             ZStack (alignment: .topLeading){
-                WebImage(url: URL(string: product.thumbnail))
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: 108)
-                    .clipped()
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                    .padding(16)
+                WebImage(url: URL(string: product.thumbnail)) { image in
+                    image
+                        .resizable()
+                } placeholder: {
+                    Image(systemName: "photo")
+                        .resizable()
+                        .scaledToFit()
+                        .foregroundStyle(.gray.opacity(0.5))
+                        .padding(32)
+                }
+                .scaledToFit()
+                .frame(height: 108)
+                .clipped()
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .padding(16)
+                    
                 
                 
                 HStack (spacing:4){

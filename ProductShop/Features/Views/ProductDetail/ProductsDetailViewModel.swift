@@ -16,7 +16,7 @@ final class ProductsDetailViewModel {
     
     private(set)  var quantity = 1
     
-    init(product: Product, ) {
+    init(product: Product ) {
         self.product = product
     }
     

@@ -29,12 +29,22 @@ struct FavoriteItemView: View {
     }
 
     private var productImage: some View {
-        WebImage(url: URL(string: product.thumbnail))
-            .resizable()
-            .scaledToFit()
-            .frame(width: 90, height: 90)
-            .background(.secondaryBackground)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+        WebImage(url: URL(string: product.thumbnail)) { image in
+            image
+                .resizable()
+        } placeholder: {
+            Image("photo")
+                .resizable()
+                .scaledToFit()
+                .foregroundStyle(.gray.opacity(0.5))
+                .padding(24)
+        }
+        .resizable()
+        .scaledToFit()
+        .frame(width: 90, height: 90)
+        .background(.secondaryBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+            
     }
 
     private var productInfo: some View {
